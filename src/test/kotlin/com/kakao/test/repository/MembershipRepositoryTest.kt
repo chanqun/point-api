@@ -52,4 +52,27 @@ class MembershipRepositoryTest @Autowired constructor(
         assertThat(memberships[1].membershipStatus).isEqualTo(MembershipStatus.Y)
         assertThat(memberships[0].membershipId).isNotEqualTo(memberships[1].membershipId)
     }
+
+    @Test
+    fun `userId와 membershipId가 일치하는 membership 검색 성공`() {
+        val userId = "test1"
+        val membership = Membership(null, "cj", userId, "happypoint", 120, MembershipStatus.Y, LocalDateTime.now())
+
+        membershipRepository.save(membership)
+
+        val findMembership = membershipRepository.findByUserIdAndMembershipId(userId, membership.membershipId!!)
+
+        assertThat(findMembership!!.membershipStatus).isEqualTo(MembershipStatus.Y)
+        assertThat(findMembership.membershipName).isEqualTo(membership.membershipName)
+    }
+
+    @Test
+    fun `userId와 membershipId에 일차하는 membership이 없을 때 - null`() {
+        val userId = "test1"
+        val membershipId = "happypoint"
+
+        val findMembership = membershipRepository.findByUserIdAndMembershipId(userId, membershipId)
+
+        assertThat(findMembership).isNull()
+    }
 }

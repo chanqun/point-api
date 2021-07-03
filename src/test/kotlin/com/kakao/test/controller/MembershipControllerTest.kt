@@ -2,14 +2,14 @@ package com.kakao.test.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kakao.test.controller.dto.MembershipCreateReq
+import com.kakao.test.controller.dto.MembershipCreateRes
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -135,5 +135,51 @@ internal class MembershipControllerTest {
             .andExpect(jsonPath("$.error.status").value(400))
     }
 
+    @Test
+    fun `userId, membershipId로 삭제 API - 성공`() {
+        val reqObject = MembershipCreateReq("cj", "happypoint", 20)
+        val req: String = objectMapper.writeValueAsString(reqObject)
 
+        val result = mockMvc
+            .perform(
+                post("/api/v1/membership").header("X-USER-ID", "test1")
+                    .contentType(APPLICATION_JSON).content(req)
+            )
+            .andExpect(status().isOk)
+            .andReturn()
+
+        val res = objectMapper.readValue(result.response.contentAsString, MembershipCreateRes::class.java)
+        val membershipId = res.response.membershipId
+
+        mockMvc
+            .perform(delete("/api/v1/membership/${membershipId}").header("X-USER-ID", "test1"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.response").value(true))
+            .andExpect(jsonPath("$.error").value(false))
+    }
+
+    @Test
+    fun `userId, membershipId로 삭제 실패 - 해당 멤버십 없음 500`() {
+        val reqObject = MembershipCreateReq("cj", "happypoint", 20)
+        val req: String = objectMapper.writeValueAsString(reqObject)
+
+        val result = mockMvc
+            .perform(
+                post("/api/v1/membership").header("X-USER-ID", "test1")
+                    .contentType(APPLICATION_JSON).content(req)
+            )
+            .andExpect(status().isOk)
+            .andReturn()
+
+        val res = objectMapper.readValue(result.response.contentAsString, MembershipCreateRes::class.java)
+        val membershipId = res.response.membershipId
+
+        mockMvc
+            .perform(delete("/api/v1/membership/${membershipId}").header("X-USER-ID", "test2"))
+            .andExpect(status().is5xxServerError)
+            .andExpect(jsonPath("$.success").value(false))
+            .andExpect(jsonPath("$.response").isEmpty)
+            .andExpect(jsonPath("$.error.status").value(500))
+    }
 }

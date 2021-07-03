@@ -7,4 +7,6 @@ interface MembershipRepository : JpaRepository<Membership, Long> {
     fun findByMembershipId(membershipId: String): Membership?
 
     fun findByUserId(userId: String): List<Membership>
+
+    fun findByUserIdAndMembershipId(userId: String, membershipId: String): Membership?
 }

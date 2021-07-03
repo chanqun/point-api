@@ -1,6 +1,7 @@
 package com.kakao.test.service
 
 import com.kakao.test.entity.Membership
+import com.kakao.test.exception.NotExistMembershipException
 import com.kakao.test.repository.MembershipRepository
 import org.springframework.stereotype.Service
 
@@ -21,9 +22,11 @@ interface MembershipService{
     /**
      * userId와 membershipId가
      * 일치하는 membership을 비활성화
+     *
      * 해당하는 membership이 없을 때
      * @exception NotExistMembershipException
      */
+    fun disableMembership(userId: String, membershipId: String)
 }
 
 @Service
@@ -39,6 +42,13 @@ class MembershipServiceImpl(
 
     override fun findMemberships(userId: String): List<Membership> {
         return membershipRepository.findByUserId(userId)
+    }
+
+    override fun disableMembership(userId: String, membershipId: String) {
+        val membership = membershipRepository.findByUserIdAndMembershipId(userId, membershipId)
+            ?: throw NotExistMembershipException()
+
+        membership.disable()
     }
 
 }

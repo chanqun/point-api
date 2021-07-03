@@ -28,5 +28,7 @@ class Membership(
         this.membershipStatus = MembershipStatus.Y
     }
 
-
+    fun disable() {
+        this.membershipStatus = MembershipStatus.N
+    }
 }

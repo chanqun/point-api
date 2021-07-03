@@ -2,6 +2,7 @@ package com.kakao.test.controller
 
 import com.kakao.test.controller.dto.MembershipCreateReq
 import com.kakao.test.controller.dto.MembershipCreateRes
+import com.kakao.test.controller.dto.MembershipDeleteRes
 import com.kakao.test.controller.dto.MembershipsRes
 import com.kakao.test.exception.NoUserIdException
 import com.kakao.test.service.MembershipService
@@ -11,15 +12,13 @@ import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/membership")
 class MembershipController @Autowired constructor(
     private val membershipService: MembershipService
 ) {
 
-    @GetMapping("/membership")
-    fun membershipList(
-        request: HttpServletRequest,
-    ): MembershipsRes {
+    @GetMapping
+    fun membershipList(request: HttpServletRequest): MembershipsRes {
         val userId = getUserId(request)
 
         val memberships = membershipService.findMemberships(userId)
@@ -27,16 +26,26 @@ class MembershipController @Autowired constructor(
         return MembershipsRes(response = memberships)
     }
 
-    @PostMapping("/membership")
+    @PostMapping
     fun createMembership(
-        request: HttpServletRequest,
-        @RequestBody @Valid req: MembershipCreateReq
+        request: HttpServletRequest, @RequestBody @Valid req: MembershipCreateReq
     ): MembershipCreateRes {
         val userId = getUserId(request)
 
         val createMembership = membershipService.create(req.toMembership(userId))
 
         return MembershipCreateRes(response = createMembership)
+    }
+
+    @DeleteMapping("/{membershipId}")
+    fun deleteMembership(
+        request: HttpServletRequest, @PathVariable membershipId: String
+    ): MembershipDeleteRes {
+        val userId = getUserId(request)
+
+        membershipService.disableMembership(userId, membershipId)
+
+        return MembershipDeleteRes()
     }
 
     private fun getUserId(request: HttpServletRequest): String {

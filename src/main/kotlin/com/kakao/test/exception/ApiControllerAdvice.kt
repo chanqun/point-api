@@ -1,5 +1,7 @@
 package com.kakao.test.exception
 
+import com.kakao.test.exception.ExceptionType.BAD_REQUEST
+import com.kakao.test.exception.ExceptionType.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -14,14 +16,21 @@ class ApiControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException::class)
     @ResponseBody
     fun processValidationError(ex: MethodArgumentNotValidException): ErrorRes {
-        return ErrorRes(error = ErrorMsg(ExceptionType.BAD_REQUEST.message, ExceptionType.BAD_REQUEST.status))
+        return ErrorRes(error = ErrorMsg(BAD_REQUEST.message, BAD_REQUEST.status))
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NoUserIdException::class)
     @ResponseBody
     fun noUserIdError(ex: NoUserIdException): ErrorRes {
-        return ErrorRes(error = ErrorMsg(ExceptionType.BAD_REQUEST.message, ExceptionType.BAD_REQUEST.status))
+        return ErrorRes(error = ErrorMsg(BAD_REQUEST.message, BAD_REQUEST.status))
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(NotExistMembershipException::class)
+    @ResponseBody
+    fun notExistMembershipError(ex: NotExistMembershipException): ErrorRes {
+        return ErrorRes(error = ErrorMsg(INTERNAL_SERVER_ERROR.message, INTERNAL_SERVER_ERROR.status))
     }
 }
 
