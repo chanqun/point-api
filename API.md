@@ -31,9 +31,9 @@ GET /api/v1/membership
 2 멤버십 등록하기
 POST /api/v1/membership
 
-req : membershipId, membershipName, point : X-USER-ID
-
 3 멤버십 삭제(비활성화) 하기
+사용자 식별 값과 membershipId 없을 떄 
+500 - NotExistMembershipException()
 
 4 멤버십 상세조회
 

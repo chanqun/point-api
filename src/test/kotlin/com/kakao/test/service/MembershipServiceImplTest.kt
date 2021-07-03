@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest(webEnvironment = NONE)
 @Transactional
-class MembershipServiceTest @Autowired constructor(
+class MembershipServiceImplTest @Autowired constructor(
     private val membershipService: MembershipService
 ) {
 
@@ -25,5 +25,28 @@ class MembershipServiceTest @Autowired constructor(
         assertThat(createMember.startDate).isNotNull
         assertThat(createMember.seq).isNotNull
         assertThat(createMember.membershipName).isEqualTo(membership.membershipName)
+    }
+
+    @Test
+    fun `Membership list 정상 조회 확인`() {
+        val userId = "test1"
+        val membership = Membership(null, "cj", userId, "cjone", 5210)
+        val membership2 = Membership(null, "shinsegae", userId, "shinsegaepoint", 3500)
+
+        membershipService.create(membership)
+        membershipService.create(membership2)
+
+        val memberships = membershipService.findMemberships(userId)
+
+        assertThat(memberships.size).isEqualTo(2)
+    }
+
+    @Test
+    fun `Membership list 없을 때 빈 리스트 반환`() {
+        val userId = "test1"
+
+        val memberships = membershipService.findMemberships(userId)
+
+        assertThat(memberships.size).isEqualTo(0)
     }
 }

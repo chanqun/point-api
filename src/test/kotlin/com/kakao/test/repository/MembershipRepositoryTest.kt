@@ -34,4 +34,22 @@ class MembershipRepositoryTest @Autowired constructor(
         assertThat(membership.membershipStatus).isEqualTo(MembershipStatus.Y)
         assertThat(membership.startDate).isEqualTo(findMembership.startDate)
     }
+
+    @Test
+    fun `membership 목록 찾기 테스트`() {
+        val userId = "test1"
+        val membership = Membership(null, "cj", userId, "happypoint", 120, MembershipStatus.Y, LocalDateTime.now())
+        val membership2 =
+            Membership(null, "shinsegae", userId, "shinsegaepoint", 3500, MembershipStatus.Y, LocalDateTime.now())
+
+        membershipRepository.save(membership)
+        membershipRepository.save(membership2)
+
+        val memberships = membershipRepository.findByUserId(userId)
+
+        assertThat(memberships.size).isEqualTo(2)
+        assertThat(memberships[0].membershipStatus).isEqualTo(MembershipStatus.Y)
+        assertThat(memberships[1].membershipStatus).isEqualTo(MembershipStatus.Y)
+        assertThat(memberships[0].membershipId).isNotEqualTo(memberships[1].membershipId)
+    }
 }

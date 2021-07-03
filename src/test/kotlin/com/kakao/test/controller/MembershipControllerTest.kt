@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -103,4 +104,36 @@ internal class MembershipControllerTest {
             .andExpect(jsonPath("$.response").isEmpty)
             .andExpect(jsonPath("$.error.status").value(400))
     }
+
+    @Test
+    fun `멤버십 전체조회 API 정상 동작`() {
+        val reqObject = MembershipCreateReq("cj", "happypoint", 20)
+        val req: String = objectMapper.writeValueAsString(reqObject)
+
+        mockMvc
+            .perform(
+                post("/api/v1/membership").header("X-USER-ID", "test1")
+                    .contentType(APPLICATION_JSON).content(req)
+            )
+            .andExpect(status().isOk)
+
+        mockMvc
+            .perform(get("/api/v1/membership").header("X-USER-ID", "test1"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.response[0].membershipId").value("cj"))
+            .andExpect(jsonPath("$.error").value(false))
+    }
+
+    @Test
+    fun `x-user-id 없을 때 멤버십 전체조회 - 400 에러`() {
+        mockMvc
+            .perform(get("/api/v1/membership"))
+            .andExpect(status().is4xxClientError)
+            .andExpect(jsonPath("$.success").value(false))
+            .andExpect(jsonPath("$.response").isEmpty)
+            .andExpect(jsonPath("$.error.status").value(400))
+    }
+
+
 }
