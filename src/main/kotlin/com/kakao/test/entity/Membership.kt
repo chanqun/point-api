@@ -1,21 +1,32 @@
 package com.kakao.test.entity
 
 import java.time.LocalDateTime
-import javax.persistence.Entity
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 class Membership(
-    @Id
-    var id: String,
 
-    var userId: String,
+    @Id @GeneratedValue
+    var seq: Long? = null,
 
-    var name: String,
+    var membershipId: String? = null,
 
-    var point: Int,
+    var userId: String? = null,
 
-    var status: MembershipStatus,
+    var membershipName: String? = null,
 
-    var startDate: LocalDateTime
-)
+    var point: Int? = null,
+
+    @Enumerated(EnumType.STRING)
+    var membershipStatus: MembershipStatus? = null,
+
+    var startDate: LocalDateTime? = null
+
+) {
+    fun create() {
+        this.startDate = LocalDateTime.now()
+        this.membershipStatus = MembershipStatus.Y
+    }
+
+
+}
