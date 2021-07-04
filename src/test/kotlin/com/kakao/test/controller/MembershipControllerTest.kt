@@ -264,7 +264,7 @@ internal class MembershipControllerTest @Autowired constructor(
         val membership =
             membershipRepository.findByUserIdAndMembershipId("test1", reqObject.membershipId)
 
-        assertThat(membership!!.point).isEqualTo(420)
+        assertThat(membership!!.point).isEqualTo(24)
     }
 
     @Test

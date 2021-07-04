@@ -115,12 +115,12 @@ class MembershipServiceImplTest @Autowired constructor(
     @Test
     fun `멤버십 포인트 적립 성공`() {
         val userId = "test1"
-        val point = 100
+        val amount = 100
         val membership = Membership(null, "cj", userId, "cjone", 5210)
 
         membershipService.create(membership)
 
-        membershipService.addPoint(userId, membership.membershipId!!, point)
+        membershipService.addPoint(userId, membership.membershipId!!, amount)
 
         em.flush()
         em.clear()
@@ -128,7 +128,7 @@ class MembershipServiceImplTest @Autowired constructor(
         val findMembership =
             membershipRepository.findByUserIdAndMembershipId(userId, membership.membershipId!!)
 
-        assertThat(findMembership!!.point).isEqualTo(5310)
+        assertThat(findMembership!!.point).isEqualTo(5211)
     }
 
     @Test

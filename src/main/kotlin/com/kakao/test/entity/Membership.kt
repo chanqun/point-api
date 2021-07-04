@@ -2,6 +2,7 @@ package com.kakao.test.entity
 
 import java.time.LocalDateTime
 import javax.persistence.*
+import kotlin.math.roundToInt
 
 @Entity
 class Membership(
@@ -32,7 +33,7 @@ class Membership(
         this.membershipStatus = MembershipStatus.N
     }
 
-    fun addPoint(point: Int) {
-        this.point = this.point?.plus(point)
+    fun addPoint(amount: Int) {
+        this.point = this.point?.plus((amount * 0.01).roundToInt())
     }
 }

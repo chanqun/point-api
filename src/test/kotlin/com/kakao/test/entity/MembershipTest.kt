@@ -13,6 +13,6 @@ class MembershipTest {
 
         membership.addPoint(200)
 
-        assertThat(membership.point).isEqualTo(320)
+        assertThat(membership.point).isEqualTo(122)
     }
 }

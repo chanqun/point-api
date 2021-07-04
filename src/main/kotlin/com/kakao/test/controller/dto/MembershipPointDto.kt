@@ -6,7 +6,7 @@ class MembershipPointReq(
     val membershipId: String,
 
     @field: Min(value = 0)
-    val point: Int
+    val amount: Int
 )
 
 class MembershipPointRes(

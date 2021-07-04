@@ -64,7 +64,7 @@ class MembershipController @Autowired constructor(
     ): MembershipPointRes {
         val userId = getUserId(request)
 
-        membershipService.addPoint(userId, req.membershipId, req.point)
+        membershipService.addPoint(userId, req.membershipId, req.amount)
 
         return MembershipPointRes()
     }
