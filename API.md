@@ -40,7 +40,9 @@ POST /api/v1/membership
 5 포인트 적립
 
 
--->API 마무리하기, kakao pay exception 으로 바꾸기?, 404 exception 받아서 처리하기
--->이미 있는 포인트면 등록 오류?
--->이미 정지되어 있는 멤버십인 경우는 똑같이 N 처리
-membership을 다른 곳에 담아서 response에 담아줄 것이냐 ;; ㅋ
+// TODO ;;
+
+--> kakao pay exception 으로 바꾸기?
+--> 이미 있는 포인트면 등록 오류?
+--> 이미 정지되어 있는 멤버십인 경우는 똑같이 N 처리
+ membership을 다른 곳에 담아서 response에 담아줄 것이냐 ;; ㅋ
