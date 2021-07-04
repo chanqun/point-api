@@ -17,7 +17,7 @@ class MembershipRepositoryTest @Autowired constructor(
 ) {
 
     @Test
-    fun `Membership 엔티티 등록 테스트`() {
+    fun `멤버십 엔티티 등록 테스트`() {
         val membership = Membership(null, "cj", "test1", "happypoint", 120, MembershipStatus.Y, LocalDateTime.now())
 
         assertThat(membership.seq).isNull()
@@ -36,7 +36,7 @@ class MembershipRepositoryTest @Autowired constructor(
     }
 
     @Test
-    fun `membership 목록 찾기 테스트`() {
+    fun `멤버십 목록 찾기 테스트`() {
         val userId = "test1"
         val membership = Membership(null, "cj", userId, "happypoint", 120, MembershipStatus.Y, LocalDateTime.now())
         val membership2 =
@@ -54,7 +54,7 @@ class MembershipRepositoryTest @Autowired constructor(
     }
 
     @Test
-    fun `userId와 membershipId가 일치하는 membership 검색 성공`() {
+    fun `userId와 membershipId가 일치하는 멤버십 검색 성공`() {
         val userId = "test1"
         val membership = Membership(null, "cj", userId, "happypoint", 120, MembershipStatus.Y, LocalDateTime.now())
 
@@ -67,7 +67,7 @@ class MembershipRepositoryTest @Autowired constructor(
     }
 
     @Test
-    fun `userId와 membershipId에 일차하는 membership이 없을 때 - null`() {
+    fun `userId와 membershipId에 일치하는 멤버십 없을 때 - null`() {
         val userId = "test1"
         val membershipId = "happypoint"
 

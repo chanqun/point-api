@@ -1,5 +1,7 @@
 package com.kakao.test.controller
 
+import MembershipPointReq
+import MembershipPointRes
 import com.kakao.test.controller.dto.*
 import com.kakao.test.exception.NoUserIdException
 import com.kakao.test.service.MembershipService
@@ -54,6 +56,17 @@ class MembershipController @Autowired constructor(
         val membership = membershipService.findMembership(userId, membershipId)
 
         return MembershipRes(response = membership)
+    }
+
+    @PutMapping("/point")
+    fun addMembershipPoint(
+        request: HttpServletRequest, @RequestBody @Valid req: MembershipPointReq
+    ): MembershipPointRes {
+        val userId = getUserId(request)
+
+        membershipService.addPoint(userId, req.membershipId, req.point)
+
+        return MembershipPointRes()
     }
 
     private fun getUserId(request: HttpServletRequest): String {

@@ -31,4 +31,8 @@ class Membership(
     fun disable() {
         this.membershipStatus = MembershipStatus.N
     }
+
+    fun addPoint(point: Int) {
+        this.point = this.point?.plus(point)
+    }
 }

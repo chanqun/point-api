@@ -22,7 +22,7 @@ class MembershipServiceImplTest @Autowired constructor(
 ) {
 
     @Test
-    fun `Membership create service 정상 등록`() {
+    fun `멤버십 정상 등록`() {
         val userId = "test1"
         val membership = Membership(null, "cj", userId, "cjone", 5210)
 
@@ -35,7 +35,7 @@ class MembershipServiceImplTest @Autowired constructor(
     }
 
     @Test
-    fun `Membership list 정상 조회 확인`() {
+    fun `멤버십 list 정상 조회 확인`() {
         val userId = "test1"
         val membership = Membership(null, "cj", userId, "cjone", 5210)
         val membership2 = Membership(null, "shinsegae", userId, "shinsegaepoint", 3500)
@@ -49,7 +49,7 @@ class MembershipServiceImplTest @Autowired constructor(
     }
 
     @Test
-    fun `Membership list 없을 때 빈 리스트 반환`() {
+    fun `멤버십 list 없을 때 빈 리스트 반환`() {
         val userId = "test1"
 
         val memberships = membershipService.findMemberships(userId)
@@ -58,7 +58,7 @@ class MembershipServiceImplTest @Autowired constructor(
     }
 
     @Test
-    fun `disable membership 성공 - status N으로 바뀜`() {
+    fun `멤버십 비활성화 성공 - status N으로 바뀜`() {
         val userId = "test1"
         val membership = Membership(null, "cj", userId, "cjone", 5210)
 
@@ -75,7 +75,7 @@ class MembershipServiceImplTest @Autowired constructor(
     }
 
     @Test
-    fun `disable membership 실패 - 해당 멤버십 없음 NotExistMembershipException`() {
+    fun `멤버십 비활성화 실패 - 해당 멤버십 없음 NotExistMembershipException`() {
         val userId = "test1"
         val membershipId = "cj"
 
@@ -109,6 +109,35 @@ class MembershipServiceImplTest @Autowired constructor(
         val membershipId = "cj"
 
         assertThatThrownBy { membershipService.findMembership(userId, membershipId) }
+            .isInstanceOf(NotExistMembershipException::class.java)
+    }
+
+    @Test
+    fun `멤버십 포인트 적립 성공`() {
+        val userId = "test1"
+        val point = 100
+        val membership = Membership(null, "cj", userId, "cjone", 5210)
+
+        membershipService.create(membership)
+
+        membershipService.addPoint(userId, membership.membershipId!!, point)
+
+        em.flush()
+        em.clear()
+
+        val findMembership =
+            membershipRepository.findByUserIdAndMembershipId(userId, membership.membershipId!!)
+
+        assertThat(findMembership!!.point).isEqualTo(5310)
+    }
+
+    @Test
+    fun `포인트 적립 실패 membership 없을때 - NotExistMembershipException`() {
+        val userId = "test1"
+        val membershipId = "cj"
+        val point = 1000
+
+        assertThatThrownBy { membershipService.addPoint(userId, membershipId, point) }
             .isInstanceOf(NotExistMembershipException::class.java)
     }
 }

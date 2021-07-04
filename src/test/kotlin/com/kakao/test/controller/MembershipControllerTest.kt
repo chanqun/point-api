@@ -1,8 +1,11 @@
 package com.kakao.test.controller
 
+import MembershipPointReq
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kakao.test.controller.dto.MembershipCreateReq
 import com.kakao.test.controller.dto.MembershipCreateRes
+import com.kakao.test.repository.MembershipRepository
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -18,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-internal class MembershipControllerTest {
+internal class MembershipControllerTest @Autowired constructor(
+    private val membershipRepository: MembershipRepository
+) {
     @Autowired
     lateinit var mockMvc: MockMvc
 
@@ -184,7 +189,7 @@ internal class MembershipControllerTest {
     }
 
     @Test
-    fun `userId, membershipId로 조회 API - 성공`() {
+    fun `userId, membershipId로 멤버십 조회 API - 성공`() {
         val reqObject = MembershipCreateReq("cj", "happypoint", 20)
         val req: String = objectMapper.writeValueAsString(reqObject)
 
@@ -208,7 +213,7 @@ internal class MembershipControllerTest {
     }
 
     @Test
-    fun `userId, membershipId로 조회 API - 실패 아이디 틀림`() {
+    fun `userId, membershipId로 멤버십 조회 API - 실패 아이디 틀림`() {
         val reqObject = MembershipCreateReq("cj", "happypoint", 20)
         val req: String = objectMapper.writeValueAsString(reqObject)
 
@@ -230,4 +235,93 @@ internal class MembershipControllerTest {
             .andExpect(jsonPath("$.response").isEmpty)
             .andExpect(jsonPath("$.error.status").value(500))
     }
+
+    @Test
+    fun `멤버십 포인트 등록 성공`() {
+        val reqObject = MembershipCreateReq("cj", "happypoint", 20)
+        val req: String = objectMapper.writeValueAsString(reqObject)
+
+        mockMvc
+            .perform(
+                post("/api/v1/membership").header("X-USER-ID", "test1")
+                    .contentType(APPLICATION_JSON).content(req)
+            )
+            .andExpect(status().isOk)
+            .andReturn()
+
+        val pointReq = objectMapper.writeValueAsString(MembershipPointReq(reqObject.membershipId, 400))
+
+        mockMvc
+            .perform(
+                put("/api/v1/membership/point").header("X-USER-ID", "test1")
+                    .contentType(APPLICATION_JSON).content(pointReq)
+            )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.response").value(true))
+            .andExpect(jsonPath("$.error").value(false))
+
+        val membership =
+            membershipRepository.findByUserIdAndMembershipId("test1", reqObject.membershipId)
+
+        assertThat(membership!!.point).isEqualTo(420)
+    }
+
+    @Test
+    fun `멤버십 포인트 등록 실패 - x-user-id 없음 400`() {
+        val pointReq = objectMapper.writeValueAsString(MembershipPointReq("cj", 350))
+
+        mockMvc
+            .perform(
+                put("/api/v1/membership/point")
+                    .contentType(APPLICATION_JSON).content(pointReq)
+            )
+            .andExpect(status().is4xxClientError)
+            .andExpect(jsonPath("$.success").value(false))
+            .andExpect(jsonPath("$.response").isEmpty)
+            .andExpect(jsonPath("$.error.status").value(400))
+    }
+
+    @Test
+    fun `멤버십 포인트 등록 실패 - 요청값 validation 오류 400`() {
+        val pointReq = objectMapper.writeValueAsString(MembershipPointReq("cj", -1))
+
+        mockMvc
+            .perform(
+                put("/api/v1/membership/point").header("X-USER-ID", "test1")
+                    .contentType(APPLICATION_JSON).content(pointReq)
+            )
+            .andExpect(status().is4xxClientError)
+            .andExpect(jsonPath("$.success").value(false))
+            .andExpect(jsonPath("$.response").isEmpty)
+            .andExpect(jsonPath("$.error.status").value(400))
+
+        val pointReq2 = objectMapper.writeValueAsString(MembershipPointReq("", 100))
+
+        mockMvc
+            .perform(
+                put("/api/v1/membership/point").header("X-USER-ID", "test1")
+                    .contentType(APPLICATION_JSON).content(pointReq2)
+            )
+            .andExpect(status().is4xxClientError)
+            .andExpect(jsonPath("$.success").value(false))
+            .andExpect(jsonPath("$.response").isEmpty)
+            .andExpect(jsonPath("$.error.status").value(400))
+    }
+
+    @Test
+    fun `멤버십 포인트 등록 실패 - 해당 멤버십 없음 500`() {
+        val pointReq = objectMapper.writeValueAsString(MembershipPointReq("cj", 350))
+
+        mockMvc
+            .perform(
+                put("/api/v1/membership/point").header("X-USER-ID", "test1")
+                    .contentType(APPLICATION_JSON).content(pointReq)
+            )
+            .andExpect(status().is5xxServerError)
+            .andExpect(jsonPath("$.success").value(false))
+            .andExpect(jsonPath("$.response").isEmpty)
+            .andExpect(jsonPath("$.error.status").value(500))
+    }
+
 }
