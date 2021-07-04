@@ -17,3 +17,6 @@ spring:
         persistence:
           validation:
             mode: none
+
+#logging.level:
+#  org.hibernate.SQL: debug

@@ -4,6 +4,7 @@ import com.kakao.test.entity.Membership
 import com.kakao.test.exception.NotExistMembershipException
 import com.kakao.test.repository.MembershipRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 interface MembershipService {
 
@@ -61,6 +62,7 @@ class MembershipServiceImpl(
         return membershipRepository.findByUserId(userId)
     }
 
+    @Transactional
     override fun disableMembership(userId: String, membershipId: String) {
         val membership = membershipRepository.findByUserIdAndMembershipId(userId, membershipId)
             ?: throw NotExistMembershipException()
@@ -73,6 +75,7 @@ class MembershipServiceImpl(
             ?: throw NotExistMembershipException()
     }
 
+    @Transactional
     override fun addPoint(userId: String, membershipId: String, amount: Int) {
         membershipRepository.findByUserIdAndMembershipId(userId, membershipId)
             ?.addPoint(amount) ?: throw NotExistMembershipException()

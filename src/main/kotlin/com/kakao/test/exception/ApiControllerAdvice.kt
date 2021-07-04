@@ -1,13 +1,13 @@
 package com.kakao.test.exception
 
-import com.kakao.test.exception.ExceptionType.BAD_REQUEST
-import com.kakao.test.exception.ExceptionType.INTERNAL_SERVER_ERROR
+import com.kakao.test.exception.ExceptionType.*
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
+import javax.naming.NotContextException
 
 @ControllerAdvice
 class ApiControllerAdvice {

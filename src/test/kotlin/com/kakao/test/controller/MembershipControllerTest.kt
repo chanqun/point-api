@@ -323,5 +323,4 @@ internal class MembershipControllerTest @Autowired constructor(
             .andExpect(jsonPath("$.response").isEmpty)
             .andExpect(jsonPath("$.error.status").value(500))
     }
-
 }
