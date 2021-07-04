@@ -82,4 +82,33 @@ class MembershipServiceImplTest @Autowired constructor(
         assertThatThrownBy { membershipService.disableMembership(userId, membershipId) }
             .isInstanceOf(NotExistMembershipException::class.java)
     }
+
+    @Test
+    fun `멤버십 상세 조회 성공`() {
+        val userId = "test1"
+        val membership = Membership(null, "cj", userId, "cjone", 5210)
+        val membership2 = Membership(null, "shinsegae", userId, "happypoint", 120)
+
+        membershipService.create(membership)
+        membershipService.create(membership2)
+
+        em.flush()
+        em.clear()
+
+        val findMembership = membershipService.findMembership(userId, membership.membershipId!!)
+
+        assertThat(findMembership.membershipStatus).isEqualTo(MembershipStatus.Y)
+        assertThat(findMembership.membershipId).isEqualTo("cj")
+        assertThat(findMembership.membershipName).isEqualTo("cjone")
+        assertThat(findMembership.point).isEqualTo(5210)
+    }
+
+    @Test
+    fun `멤버십 상세 정보 조회 - 해당 멤버십 없음 NotExistMembershipException`() {
+        val userId = "test1"
+        val membershipId = "cj"
+
+        assertThatThrownBy { membershipService.findMembership(userId, membershipId) }
+            .isInstanceOf(NotExistMembershipException::class.java)
+    }
 }

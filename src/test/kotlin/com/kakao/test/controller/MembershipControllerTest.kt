@@ -182,4 +182,52 @@ internal class MembershipControllerTest {
             .andExpect(jsonPath("$.response").isEmpty)
             .andExpect(jsonPath("$.error.status").value(500))
     }
+
+    @Test
+    fun `userId, membershipId로 조회 API - 성공`() {
+        val reqObject = MembershipCreateReq("cj", "happypoint", 20)
+        val req: String = objectMapper.writeValueAsString(reqObject)
+
+        val result = mockMvc
+            .perform(
+                post("/api/v1/membership").header("X-USER-ID", "test1")
+                    .contentType(APPLICATION_JSON).content(req)
+            )
+            .andExpect(status().isOk)
+            .andReturn()
+
+        val res = objectMapper.readValue(result.response.contentAsString, MembershipCreateRes::class.java)
+        val membershipId = res.response.membershipId
+
+        mockMvc
+            .perform(get("/api/v1/membership/${membershipId}").header("X-USER-ID", "test1"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.response.membershipName").value("happypoint"))
+            .andExpect(jsonPath("$.error").value(false))
+    }
+
+    @Test
+    fun `userId, membershipId로 조회 API - 실패 아이디 틀림`() {
+        val reqObject = MembershipCreateReq("cj", "happypoint", 20)
+        val req: String = objectMapper.writeValueAsString(reqObject)
+
+        val result = mockMvc
+            .perform(
+                post("/api/v1/membership").header("X-USER-ID", "test1")
+                    .contentType(APPLICATION_JSON).content(req)
+            )
+            .andExpect(status().isOk)
+            .andReturn()
+
+        val res = objectMapper.readValue(result.response.contentAsString, MembershipCreateRes::class.java)
+        val membershipId = res.response.membershipId
+
+        mockMvc
+            .perform(get("/api/v1/membership/${membershipId}").header("X-USER-ID", "test2"))
+            .andExpect(status().is5xxServerError)
+            .andExpect(jsonPath("$.success").value(false))
+            .andExpect(jsonPath("$.response").isEmpty)
+            .andExpect(jsonPath("$.error.status").value(500))
+    }
 }

@@ -38,3 +38,6 @@ POST /api/v1/membership
 4 멤버십 상세조회
 
 5 포인트 적립
+
+
+-->API 마무리하기, kakao pay exception 으로 바꾸기?, 404 exception 받아서 처리하기

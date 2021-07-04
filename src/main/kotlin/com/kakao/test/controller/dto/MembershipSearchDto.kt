@@ -7,3 +7,9 @@ class MembershipsRes(
     val response: List<Membership>,
     val error: Boolean = false
 )
+
+class MembershipRes(
+    val success: Boolean = true,
+    val response: Membership,
+    val error: Boolean = false
+)

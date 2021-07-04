@@ -1,9 +1,6 @@
 package com.kakao.test.controller
 
-import com.kakao.test.controller.dto.MembershipCreateReq
-import com.kakao.test.controller.dto.MembershipCreateRes
-import com.kakao.test.controller.dto.MembershipDeleteRes
-import com.kakao.test.controller.dto.MembershipsRes
+import com.kakao.test.controller.dto.*
 import com.kakao.test.exception.NoUserIdException
 import com.kakao.test.service.MembershipService
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,6 +43,17 @@ class MembershipController @Autowired constructor(
         membershipService.disableMembership(userId, membershipId)
 
         return MembershipDeleteRes()
+    }
+
+    @GetMapping("/{membershipId}")
+    fun findMembership(
+        request: HttpServletRequest, @PathVariable membershipId: String
+    ): MembershipRes {
+        val userId = getUserId(request)
+
+        val membership = membershipService.findMembership(userId, membershipId)
+
+        return MembershipRes(response = membership)
     }
 
     private fun getUserId(request: HttpServletRequest): String {
