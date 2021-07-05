@@ -1,5 +1,6 @@
 package com.kakao.test.entity
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 import javax.persistence.*
 import kotlin.math.roundToInt
@@ -21,6 +22,7 @@ class Membership(
     @Enumerated(EnumType.STRING)
     var membershipStatus: MembershipStatus? = null,
 
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss.SSS", timezone="Asia/Seoul")
     var startDate: LocalDateTime? = null
 
 ) {
