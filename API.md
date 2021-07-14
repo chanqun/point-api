@@ -40,7 +40,7 @@ POST /api/v1/membership
 5 포인트 적립
 
 
-// TODO ;;
+// TODO
 
 --> kakao pay exception 으로 바꾸기?
 --> 이미 있는 포인트면 등록 오류?
