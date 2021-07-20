@@ -1,4 +1,4 @@
-#### 카카오페이 멤버십 적립 서비스
+#### 멤버십 적립 서비스
 
 멤버십
 해피포인트, 신세계포인트, CJ ONE
@@ -42,7 +42,7 @@ POST /api/v1/membership
 
 // TODO -123 456
 
---> kakao pay exception 으로 바꾸기?
+--> 공통 pay exception 으로 바꾸기?
 --> 이미 있는 포인트면 등록 오류?
 --> 이미 정지되어 있는 멤버십인 경우는 똑같이 N 처리
  membership을 다른 곳에 담아서 response에 담아줄 것이냐 ;; ㅋ
