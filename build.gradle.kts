@@ -8,7 +8,7 @@ plugins {
     kotlin("plugin.jpa") version "1.5.20"
 }
 
-group = "com.kakao"
+group = "com.point"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
